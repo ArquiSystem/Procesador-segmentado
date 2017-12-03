@@ -40,7 +40,7 @@ entity Instruction_Decode is
            WRDENMEM : out  STD_LOGIC;
            PCSOURCE : out  STD_LOGIC_VECTOR (1 downto 0);
            ALUOP : out  STD_LOGIC_VECTOR (5 downto 0);
-           cRD : out  STD_LOGIC_VECTOR (31 downto 0);
+           CRD : out  STD_LOGIC_VECTOR (31 downto 0);
            CRS1 : out  STD_LOGIC_VECTOR (31 downto 0);
            CRS2 : out  STD_LOGIC_VECTOR (31 downto 0);
            SEU : out  STD_LOGIC_VECTOR (31 downto 0);
