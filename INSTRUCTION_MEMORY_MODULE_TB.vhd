@@ -41,7 +41,7 @@ ARCHITECTURE behavior OF INSTRUCTION_MEMORY_MODULE_TB IS
  
     COMPONENT INSTRUCTION_MEMORY_MODULE
     PORT(
-         PC : IN  std_logic_vector(5 downto 0);
+         PC : IN  std_logic_vector(31 downto 0);
          RST : IN  std_logic;
          INSTRUCTION : OUT  std_logic_vector(31 downto 0)
         );
