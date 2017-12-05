@@ -2,15 +2,15 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   13:19:38 10/22/2017
+-- Create Date:   17:03:00 10/22/2017
 -- Design Name:   
--- Module Name:   C:/Users/Stiven/Desktop/ARQUITECTURA/PROCESADOR_III/INSTRUCTION_MEMORY_MODULE_TB.vhd
+-- Module Name:   C:/Users/Stiven/Desktop/ARQUITECTURA/PROCESADOR_III/PSR_MODIFIER_MODULE_TB.vhd
 -- Project Name:  PROCESADOR_III
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
 -- 
--- VHDL Test Bench Created by ISE for module: INSTRUCTION_MEMORY_MODULE
+-- VHDL Test Bench Created by ISE for module: PSR_MODIFIER_MODULE
 -- 
 -- Dependencies:
 -- 
@@ -32,58 +32,48 @@ USE ieee.std_logic_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
  
-ENTITY INSTRUCTION_MEMORY_MODULE_TB IS
-END INSTRUCTION_MEMORY_MODULE_TB;
+ENTITY PSR_MODIFIER_MODULE_TB IS
+END PSR_MODIFIER_MODULE_TB;
  
-ARCHITECTURE behavior OF INSTRUCTION_MEMORY_MODULE_TB IS 
+ARCHITECTURE behavior OF PSR_MODIFIER_MODULE_TB IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT INSTRUCTION_MEMORY_MODULE
+    COMPONENT PSR_MODIFIER_MODULE
     PORT(
-         PC : IN  std_logic_vector(5 downto 0);
-         RST : IN  std_logic;
-         INSTRUCTION : OUT  std_logic_vector(31 downto 0)
+         CRS1 : IN  std_logic_vector(31 downto 0);
+         OP2 : IN  std_logic_vector(31 downto 0);
+         ALUOP : IN  std_logic_vector(5 downto 0);
+         ALU_RESULT : IN  std_logic_vector(31 downto 0);
+         NZVC : OUT  std_logic_vector(3 downto 0)
         );
     END COMPONENT;
     
 
    --Inputs
-   signal PC : std_logic_vector(5 downto 0) := (others => '0');
-   signal RST : std_logic := '0';
+   signal CRS1 : std_logic_vector(31 downto 0) := (others => '0');
+   signal OP2 : std_logic_vector(31 downto 0) := (others => '0');
+   signal ALUOP : std_logic_vector(5 downto 0) := (others => '0');
+   signal ALU_RESULT : std_logic_vector(31 downto 0) := (others => '0');
 
  	--Outputs
-   signal INSTRUCTION : std_logic_vector(31 downto 0);
-   -- No clocks detected in port list. Replace <clock> below with 
-   -- appropriate port name 
- 
+   signal NZVC : std_logic_vector(3 downto 0);
+
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: INSTRUCTION_MEMORY_MODULE PORT MAP (
-          PC => PC,
-          RST => RST,
-          INSTRUCTION => INSTRUCTION
+   uut: PSR_MODIFIER_MODULE PORT MAP (
+          CRS1 => CRS1,
+          OP2 => OP2,
+          ALUOP => ALUOP,
+          ALU_RESULT => ALU_RESULT,
+          NZVC => NZVC
         );
- 
+		  
    -- Stimulus process
    stim_proc: process
-   begin	
-		
-		PC<="000000";
-      wait for 10 ns;
-		PC<="000001";
-      wait for 10 ns;
-		PC<="000010";
-      wait for 10 ns;
-		PC<="000011";
-      wait for 10 ns;
-		PC<="000100";
-      wait for 10 ns;
-		RST<='1';
-
-      -- insert stimulus here 
-
+   begin		
+      
       wait;
    end process;
 

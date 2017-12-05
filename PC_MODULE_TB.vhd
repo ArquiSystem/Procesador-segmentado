@@ -2,15 +2,15 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   13:19:38 10/22/2017
+-- Create Date:   15:01:16 10/22/2017
 -- Design Name:   
--- Module Name:   C:/Users/Stiven/Desktop/ARQUITECTURA/PROCESADOR_III/INSTRUCTION_MEMORY_MODULE_TB.vhd
+-- Module Name:   C:/Users/Stiven/Desktop/ARQUITECTURA/PROCESADOR_III/PC_MODULE_TB.vhd
 -- Project Name:  PROCESADOR_III
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
 -- 
--- VHDL Test Bench Created by ISE for module: INSTRUCTION_MEMORY_MODULE
+-- VHDL Test Bench Created by ISE for module: PC_MODULE
 -- 
 -- Dependencies:
 -- 
@@ -32,58 +32,60 @@ USE ieee.std_logic_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
  
-ENTITY INSTRUCTION_MEMORY_MODULE_TB IS
-END INSTRUCTION_MEMORY_MODULE_TB;
+ENTITY PC_MODULE_TB IS
+END PC_MODULE_TB;
  
-ARCHITECTURE behavior OF INSTRUCTION_MEMORY_MODULE_TB IS 
+ARCHITECTURE behavior OF PC_MODULE_TB IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT INSTRUCTION_MEMORY_MODULE
+    COMPONENT PC_MODULE
     PORT(
-         PC : IN  std_logic_vector(5 downto 0);
+         PC : OUT  std_logic_vector(31 downto 0);
+         CLK : IN  std_logic;
          RST : IN  std_logic;
-         INSTRUCTION : OUT  std_logic_vector(31 downto 0)
+         INSTR : IN  std_logic_vector(31 downto 0)
         );
     END COMPONENT;
     
 
    --Inputs
-   signal PC : std_logic_vector(5 downto 0) := (others => '0');
+   signal CLK : std_logic := '0';
    signal RST : std_logic := '0';
+   signal INSTR : std_logic_vector(31 downto 0) := (others => '0');
 
  	--Outputs
-   signal INSTRUCTION : std_logic_vector(31 downto 0);
-   -- No clocks detected in port list. Replace <clock> below with 
-   -- appropriate port name 
+   signal PC : std_logic_vector(31 downto 0);
+
+   -- Clock period definitions
+   constant CLK_period : time := 10 ns;
  
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: INSTRUCTION_MEMORY_MODULE PORT MAP (
+   uut: PC_MODULE PORT MAP (
           PC => PC,
+          CLK => CLK,
           RST => RST,
-          INSTRUCTION => INSTRUCTION
+          INSTR => INSTR
         );
+
+   -- Clock process definitions
+   CLK_process :process
+   begin
+		CLK <= '0';
+		wait for CLK_period/2;
+		CLK <= '1';
+		wait for CLK_period/2;
+   end process;
  
+
    -- Stimulus process
    stim_proc: process
    begin	
-		
-		PC<="000000";
-      wait for 10 ns;
-		PC<="000001";
-      wait for 10 ns;
-		PC<="000010";
-      wait for 10 ns;
-		PC<="000011";
-      wait for 10 ns;
-		PC<="000100";
-      wait for 10 ns;
-		RST<='1';
-
-      -- insert stimulus here 
-
+		INSTR <= "11111100000010101011001011111110";
+      WAIT FOR 10 NS;
+		RST <= '1';
       wait;
    end process;
 

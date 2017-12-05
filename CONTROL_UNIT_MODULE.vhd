@@ -23,6 +23,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity CONTROL_UNIT_MODULE is
     Port ( OP : IN  STD_LOGIC_VECTOR (1 DOWNTO 0);
+			  OP2 : IN STD_LOGIC_VECTOR (2 DOWNTO 0);
            OP3 : in  STD_LOGIC_VECTOR (5 DOWNTO 0);
            ICC : IN STD_LOGIC_VECTOR (3 DOWNTO 0);
 			  COND : IN STD_LOGIC_VECTOR (3 DOWNTO 0);
@@ -39,7 +40,7 @@ end CONTROL_UNIT_MODULE;
 architecture Behavioral of CONTROL_UNIT_MODULE is
 
 begin
-process(OP,OP3,COND,ICC)
+process(OP,OP2,OP3,COND,ICC)
 begin
 	CASE OP IS
 		WHEN "00" => 
@@ -48,98 +49,103 @@ begin
 			WE<='0';
 			RFDEST<='0';
 			RFSOURCE<="10";
-			CASE COND IS
-				WHEN "1000" => 					--BRANCH ALWAYS
-					PCSOURCE<="01";
-				WHEN "0000" =>						--BRANCH NEVER
+			CASE OP2 IS 
+				WHEN "010" =>
+				CASE COND IS
+					WHEN "1000" => 					--BRANCH ALWAYS
+						PCSOURCE<="01";
+					WHEN "0000" =>						--BRANCH NEVER
+						PCSOURCE<="10";
+					WHEN "1001" =>						--BRANCH NOT EQUAL
+						IF NOT(ICC(2))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "0001" =>						--BRANCH EQUAL
+						IF ICC(2)='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "1010" =>						--BRANCH GREATER
+						IF NOT(ICC(2) OR (ICC(3) XOR ICC(1)))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "0010" =>						--BRANCH LESS OR EQUAL
+						IF  ((ICC(2) OR ICC(3)) XOR ICC(1))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "1011" =>						--BRANCH GREATER EQUAL
+						IF  NOT(ICC(3) XOR ICC(1))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "0011" =>						--BRANCH LESS
+						IF (ICC(3) XOR ICC(1))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "1100" =>						--BRANCH GREATER UNSIGNED
+						IF  NOT(ICC(0) OR ICC(2))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "0100" =>						--LESS OR EQUAL UNSIGNED
+						IF (ICC(0) OR ICC(2))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "1101" =>						--BRANCH CARRY CLEAR
+						IF  NOT(ICC(0))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "0101" =>						--BRANCH CARRY SET
+						IF  ICC(0)='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "1110" =>						--BRANCH POSITIVE
+						IF  NOT(ICC(3))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "0110" =>						--BRANCH NEGATIVE
+						IF  ICC(3)='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "1111" =>						--BRANCH OVERFLOW CLEAR
+						IF NOT(ICC(1))='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN "0111" =>						--BRANCH OVERFLOW SET
+						IF ICC(1)='1' THEN
+							PCSOURCE<="01";
+						ELSE
+							PCSOURCE<="10";
+						END IF;
+					WHEN OTHERS => 
+						PCSOURCE<="10";
+				END CASE;
+				WHEN OTHERS =>
 					PCSOURCE<="10";
-				WHEN "1001" =>						--BRANCH NOT EQUAL
-					IF NOT(ICC(2))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "0001" =>						--BRANCH EQUAL
-					IF ICC(2)='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "1010" =>						--BRANCH GREATER
-					IF NOT(ICC(2) OR (ICC(3) XOR ICC(1)))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "0010" =>						--BRANCH LESS OR EQUAL
-					IF  ((ICC(2) OR ICC(3)) XOR ICC(1))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "1011" =>						--BRANCH GREATER EQUAL
-					IF  NOT(ICC(3) XOR ICC(1))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "0011" =>						--BRANCH LESS
-					IF (ICC(3) XOR ICC(1))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "1100" =>						--BRANCH GREATER UNSIGNED
-					IF  NOT(ICC(0) OR ICC(2))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "0100" =>						--LESS OR EQUAL UNSIGNED
-					IF (ICC(0) OR ICC(2))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "1101" =>						--BRANCH CARRY CLEAR
-					IF  NOT(ICC(0))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "0101" =>						--BRANCH CARRY SET
-					IF  ICC(0)='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "1110" =>						--BRANCH POSITIVE
-					IF  NOT(ICC(3))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "0110" =>						--BRANCH NEGATIVE
-					IF  ICC(3)='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "1111" =>						--BRANCH OVERFLOW CLEAR
-					IF NOT(ICC(1))='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN "0111" =>						--BRANCH OVERFLOW SET
-					IF ICC(1)='1' THEN
-						PCSOURCE<="01";
-					ELSE
-						PCSOURCE<="10";
-					END IF;
-				WHEN OTHERS => 
-					PCSOURCE<="10";
-			END CASE;
+				END CASE;
 		WHEN "10" => 
 			CASE OP3 IS
 				WHEN "111000" =>				--JUMP AND LINK

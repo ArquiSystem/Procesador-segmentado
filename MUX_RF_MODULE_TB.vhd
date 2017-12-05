@@ -2,15 +2,15 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   13:19:38 10/22/2017
+-- Create Date:   23:34:42 10/21/2017
 -- Design Name:   
--- Module Name:   C:/Users/Stiven/Desktop/ARQUITECTURA/PROCESADOR_III/INSTRUCTION_MEMORY_MODULE_TB.vhd
+-- Module Name:   C:/Users/Stiven/Desktop/ARQUITECTURA/PROCESADOR_III/MUX_RF_MODULE_TB.vhd
 -- Project Name:  PROCESADOR_III
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
 -- 
--- VHDL Test Bench Created by ISE for module: INSTRUCTION_MEMORY_MODULE
+-- VHDL Test Bench Created by ISE for module: MUX_RF_MODULE
 -- 
 -- Dependencies:
 -- 
@@ -32,58 +32,51 @@ USE ieee.std_logic_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
  
-ENTITY INSTRUCTION_MEMORY_MODULE_TB IS
-END INSTRUCTION_MEMORY_MODULE_TB;
+ENTITY MUX_RF_MODULE_TB IS
+END MUX_RF_MODULE_TB;
  
-ARCHITECTURE behavior OF INSTRUCTION_MEMORY_MODULE_TB IS 
+ARCHITECTURE behavior OF MUX_RF_MODULE_TB IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT INSTRUCTION_MEMORY_MODULE
+    COMPONENT MUX_RF_MODULE
     PORT(
-         PC : IN  std_logic_vector(5 downto 0);
-         RST : IN  std_logic;
-         INSTRUCTION : OUT  std_logic_vector(31 downto 0)
+         I : IN  std_logic;
+         CRS2 : IN  std_logic_vector(31 downto 0);
+         SIMM : IN  std_logic_vector(31 downto 0);
+         OP2 : OUT  std_logic_vector(31 downto 0)
         );
     END COMPONENT;
     
 
    --Inputs
-   signal PC : std_logic_vector(5 downto 0) := (others => '0');
-   signal RST : std_logic := '0';
+   signal I : std_logic := '0';
+   signal CRS2 : std_logic_vector(31 downto 0) := (others => '0');
+   signal SIMM : std_logic_vector(31 downto 0) := (others => '0');
 
  	--Outputs
-   signal INSTRUCTION : std_logic_vector(31 downto 0);
-   -- No clocks detected in port list. Replace <clock> below with 
-   -- appropriate port name 
- 
+   signal OP2 : std_logic_vector(31 downto 0);
+	
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: INSTRUCTION_MEMORY_MODULE PORT MAP (
-          PC => PC,
-          RST => RST,
-          INSTRUCTION => INSTRUCTION
+   uut: MUX_RF_MODULE PORT MAP (
+          I => I,
+          CRS2 => CRS2,
+          SIMM => SIMM,
+          OP2 => OP2
         );
- 
+
    -- Stimulus process
    stim_proc: process
-   begin	
-		
-		PC<="000000";
-      wait for 10 ns;
-		PC<="000001";
-      wait for 10 ns;
-		PC<="000010";
-      wait for 10 ns;
-		PC<="000011";
-      wait for 10 ns;
-		PC<="000100";
-      wait for 10 ns;
-		RST<='1';
-
-      -- insert stimulus here 
-
+   begin		
+		I <= '0';
+		CRS2 <= X"FFFFFFFF";
+		SIMM <= X"FFFFF111";
+		WAIT FOR 10 NS;
+		I <= '1';
+		CRS2 <= X"FFFFFFFF";
+		SIMM <= X"FFFFF111";
       wait;
    end process;
 

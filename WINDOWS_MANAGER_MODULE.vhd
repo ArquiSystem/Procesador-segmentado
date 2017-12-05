@@ -50,7 +50,7 @@ begin
 	PROCESS(OP,OP3,RS1,RS2,RD,CWP)
 	BEGIN
 		CASE OP IS
-			WHEN "00" =>
+			WHEN "00"=>
 				NCWP <= CWP;
 				NRS1 <= "000000";
 				NRS2 <= "000000";
